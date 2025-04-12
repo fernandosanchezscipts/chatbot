@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⏰ BIG BEN Chatbot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- 🌗 THEME TOGGLE BUTTON -->
+  <button id="theme-toggle" style="position: absolute; top: 1rem; right: 1rem;">
+    🌓 Toggle Theme
+  </button>
+
+  <div class="chat-container">
+    <h1>⏰ BIG BEN Chatbot</h1>
+
+    <form id="chat-form" enctype="multipart/form-data">
+      <input
+        type="text"
+        id="user-input"
+        name="message"
+        placeholder="Type your message..."
+      />
+      <input type="file" id="image-upload" name="image" />
+      <button type="submit">Send</button>
+    </form>
+
+    <div id="chatbox"></div>
+    <button id="save-btn">📃 Save Chat</button>
+  </div>
+
+  <!-- ✅ Properly placed script tag -->
+  <script src="/static/script.js"></script>
+</body>
+</html>

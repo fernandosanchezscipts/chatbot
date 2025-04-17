@@ -1,12 +1,13 @@
 const chatbox = document.getElementById('chatbox');
 const toggle = document.getElementById('theme-toggle');
-const sendBtn = document.getElementById('send-btn');
+const sendBtn = document.querySelector('.send');
 const imageInput = document.getElementById('image-upload');
 const pdfInput = document.getElementById('pdf-upload');
 const modal = document.querySelector('.modal');
 const modalClose = document.querySelector('.modal-close-button');
 const extraBtn = document.getElementById('addExtra');
 const userInput = document.getElementById('user-input');
+
 let conversation = [];
 
 function formatTime(date) {
@@ -75,23 +76,23 @@ sendBtn.addEventListener('click', async () => {
     conversation.push({ role: 'assistant', content: data.reply });
   } catch (err) {
     loading.remove();
-    addMessage('gpt', "Something went wrong.");
+    addMessage('gpt', 'Something went wrong.');
   }
 
-  userInput.value = "";
-  imageInput.value = "";
-  pdfInput.value = "";
+  userInput.value = '';
+  imageInput.value = '';
+  pdfInput.value = '';
 });
 
-// Theme toggle
 toggle.addEventListener('click', () => {
   document.body.classList.toggle('light-mode');
 });
 
-// Modal handling
 extraBtn.addEventListener('click', () => {
   modal.classList.toggle('show-modal');
 });
+
 modalClose.addEventListener('click', () => {
   modal.classList.remove('show-modal');
 });
+

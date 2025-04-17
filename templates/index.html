@@ -10,39 +10,36 @@
   <script defer src="/static/script.js"></script>
 </head>
 <body>
-
-  <div class="chat-box">
-    <div class="chat-box-header">
-      <h3>WizardAI</h3>
-      <p><i class="fa fa-times"></i></p>
+    <button id="theme-toggle">Toggle Theme</button>
+  
+    <div class="chat-box">
+      <div class="chat-box-header">
+        <h3>WizardAI</h3>
+        <p><i class="fa fa-times"></i></p>
+      </div>
+  
+      <div class="chat-box-body" id="chatbox">
+        <!-- Chat bubbles will be injected here -->
+      </div>
+  
+      <div class="chat-box-footer">
+        <button id="addExtra" title="Upload"><i class="fa fa-plus"></i></button>
+        <input id="user-input" type="text" name="message" placeholder="Enter your message..." />
+        <input type="file" id="image-upload" name="image" style="display:none;">
+        <input type="file" id="pdf-upload" name="pdf" accept="application/pdf" style="display:none;">
+        <i class="send fas fa-paper-plane" title="Send"></i>
+      </div>
     </div>
-
-    <div class="chat-box-body" id="chatbox">
-      <!-- Chat messages appear here -->
+  
+    <div class="chat-button"><span></span></div>
+  
+    <div class="modal">
+      <div class="modal-content">
+        <span class="modal-close-button">&times;</span>
+        <h1>Upload Options</h1>
+        <button onclick="document.getElementById('image-upload').click();">Upload Image</button>
+        <button onclick="document.getElementById('pdf-upload').click();">Upload PDF</button>
+      </div>
     </div>
-
-    <!-- ✅ Wrapped input area in a form -->
-    <form id="chat-form" class="chat-box-footer" enctype="multipart/form-data">
-      <button type="button" id="addExtra"><i class="fa fa-plus"></i></button>
-      <input id="user-input" placeholder="Enter your message..." type="text" name="message" />
-      <input type="file" id="image-upload" name="image" style="display:none;">
-      <input type="file" id="pdf-upload" name="pdf" accept="application/pdf" style="display:none;">
-      <!-- ✅ Send button now submits the form -->
-      <button type="submit" id="send-btn"><i class="send fas fa-paper-plane"></i></button>
-    </form>
-  </div>
-
-  <div class="chat-button"><span></span></div>
-
-  <div class="modal">
-    <div class="modal-content">
-      <span class="modal-close-button">&times;</span>
-      <h1>Upload Options</h1>
-      <button onclick="document.getElementById('image-upload').click();">Upload Image</button>
-      <button onclick="document.getElementById('pdf-upload').click();">Upload PDF</button>
-    </div>
-  </div>
-
-</body>
-</html>
-
+  </body>
+  

@@ -1,4 +1,4 @@
-/* GLOBAL RESET & BASE */
+/* BASE STYLES */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,86 +11,73 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* CHAT WRAPPER */
-  .chat-container {
-    background-color: #1e293b;
-    border-radius: 16px;
-    padding: 2rem;
+  .chat-box {
     width: 100%;
     max-width: 720px;
+    background-color: #1e293b;
+    border-radius: 16px;
+    padding: 1.5rem;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
     transition: background-color 0.3s ease;
   }
   
-  h1 {
-    text-align: center;
-    margin-bottom: 1rem;
-    font-size: 1.75rem;
-    color: #38bdf8;
-  }
-  
-  #chat-form {
+  .chat-box-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
   
-  #user-input,
-  #image-upload {
-    padding: 0.75rem;
-    border-radius: 10px;
-    border: none;
-    font-size: 1rem;
-    background-color: #334155;
+  .chat-box-header h3 {
+    font-size: 1.5rem;
+    color: #38bdf8;
+    margin: 0;
+  }
+  
+  .chat-box-header p {
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 0;
     color: #f8fafc;
   }
   
-  button {
-    padding: 0.75rem;
-    background-color: #3b82f6;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #2563eb;
-  }
-  
-  #chatbox {
-    margin-top: 1.5rem;
+  .chat-box-body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    max-height: 400px;
     overflow-y: auto;
-    padding-right: 5px;
+    gap: 1rem;
+    padding-right: 6px;
+    margin-bottom: 1rem;
   }
   
-  .bubble {
-    max-width: 80%;
+  .chat-box-body-send,
+  .chat-box-body-receive {
+    max-width: 75%;
     padding: 0.75rem 1rem;
     border-radius: 12px;
     position: relative;
-    animation: fadeIn 0.3s ease-in-out;
     word-wrap: break-word;
     white-space: pre-wrap;
-    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    animation: fadeIn 0.3s ease-in-out;
   }
   
-  .user {
+  .chat-box-body-send {
+    align-self: flex-end;
     background-color: #38bdf8;
     color: #0f172a;
-    align-self: flex-end;
     border-bottom-right-radius: 0;
   }
   
-  .gpt {
-    background-color: #334155;
+  .chat-box-body-receive {
     align-self: flex-start;
+    background-color: #334155;
+    color: #f8fafc;
     border-bottom-left-radius: 0;
   }
   
@@ -108,9 +95,38 @@ body {
     color: #94a3b8;
   }
   
-  #save-btn {
-    margin-top: 1.5rem;
-    width: 100%;
+  .chat-box-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .chat-box-footer button,
+  .chat-box-footer i {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .chat-box-footer button:hover,
+  .chat-box-footer i:hover {
+    background-color: #2563eb;
+  }
+  
+  .chat-box-footer input[type="text"] {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #334155;
+    color: #f8fafc;
+    font-size: 1rem;
   }
   
   #theme-toggle {
@@ -119,11 +135,11 @@ body {
     right: 1rem;
     background-color: #64748b;
     color: white;
-    border: none;
     padding: 0.5rem 1rem;
     border-radius: 10px;
-    cursor: pointer;
     font-weight: bold;
+    border: none;
+    cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
@@ -131,37 +147,44 @@ body {
     background-color: #475569;
   }
   
-  /* LOADING DOTS */
-  .typing-dots span {
-    animation: blink 1.5s infinite;
-    font-size: 1.5rem;
+  .chat-button {
+    display: none;
   }
   
-  .typing-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  .typing-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-  
-  @keyframes blink {
-    0%, 80%, 100% {
-      opacity: 0;
-    }
-    40% {
-      opacity: 1;
-    }
+  /* MODAL STYLES */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
   }
   
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .modal.show-modal {
+    display: flex;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  
+  .modal-content h1 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-content button {
+    margin: 0.5rem;
+    padding: 0.75rem 1.25rem;
   }
   
   /* LIGHT MODE OVERRIDES */
@@ -170,33 +193,34 @@ body {
     color: #0f172a;
   }
   
-  body.light-mode .chat-container {
+  body.light-mode .chat-box {
     background-color: #e2e8f0;
     color: #0f172a;
   }
   
-  body.light-mode .user {
+  body.light-mode .chat-box-body-send {
     background-color: #3b82f6;
-    color: #fff;
+    color: white;
   }
   
-  body.light-mode .gpt {
+  body.light-mode .chat-box-body-receive {
     background-color: #cbd5e1;
     color: #0f172a;
   }
   
-  body.light-mode #user-input,
-  body.light-mode #image-upload {
+  body.light-mode .chat-box-footer input[type="text"] {
     background-color: #cbd5e1;
     color: #0f172a;
   }
   
-  body.light-mode button {
+  body.light-mode .chat-box-footer button,
+  body.light-mode .chat-box-footer i {
     background-color: #0ea5e9;
     color: white;
   }
   
-  body.light-mode button:hover {
+  body.light-mode .chat-box-footer button:hover,
+  body.light-mode .chat-box-footer i:hover {
     background-color: #0284c7;
   }
   
@@ -206,5 +230,17 @@ body {
   
   body.light-mode #theme-toggle:hover {
     background-color: #64748b;
+  }
+  
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   

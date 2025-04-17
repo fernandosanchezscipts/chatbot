@@ -18,7 +18,7 @@ function addMessage(role, text, isImage = false) {
     img.className = 'preview-img';
     bubble.appendChild(img);
   } else {
-    bubble.innerText = text;
+    bubble.innerHTML = text; // Use innerHTML for MathJax to work
   }
 
   const timestamp = document.createElement('span');
@@ -28,6 +28,11 @@ function addMessage(role, text, isImage = false) {
 
   chatbox.appendChild(bubble);
   chatbox.scrollTop = chatbox.scrollHeight;
+
+  // Re-render MathJax after adding a new GPT message
+  if (window.MathJax) {
+    MathJax.typesetPromise();
+  }
 }
 
 form.addEventListener('submit', async (e) => {
@@ -83,4 +88,3 @@ saveBtn.addEventListener('click', () => {
 toggle.addEventListener('click', () => {
   document.body.classList.toggle('light-mode');
 });
-

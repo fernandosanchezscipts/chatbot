@@ -15,19 +15,19 @@
     <div class="chat-box">
       <div class="chat-box-header">
         <h3>WizardAI</h3>
-        <p><i class="fa fa-times"></i></p>
+        <p id="close-btn"><i class="fa fa-times"></i></p>
       </div>
   
       <div class="chat-box-body" id="chatbox">
-        <!-- Chat bubbles will be injected here -->
+        <!-- Chat messages appear here -->
       </div>
   
       <div class="chat-box-footer">
-        <button id="addExtra" title="Upload"><i class="fa fa-plus"></i></button>
-        <input id="user-input" type="text" name="message" placeholder="Enter your message..." />
-        <input type="file" id="image-upload" name="image" style="display:none;">
-        <input type="file" id="pdf-upload" name="pdf" accept="application/pdf" style="display:none;">
-        <i class="send fas fa-paper-plane" title="Send"></i>
+        <button id="addExtra"><i class="fa fa-plus"></i></button>
+        <input id="user-input" name="message" placeholder="Enter your message..." type="text" />
+        <input type="file" id="image-upload" name="image" style="display:none;" />
+        <input type="file" id="pdf-upload" name="pdf" accept="application/pdf" style="display:none;" />
+        <button type="submit" id="send-btn"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
   
@@ -43,3 +43,4 @@
     </div>
   </body>
   
+

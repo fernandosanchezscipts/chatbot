@@ -1,90 +1,99 @@
-const form = document.getElementById('chat-form');
-const chatbox = document.getElementById('chatbox');
-const saveBtn = document.getElementById('save-btn');
-const toggle = document.getElementById('theme-toggle');
-let conversation = [];
+document.addEventListener('DOMContentLoaded', function () {
+  const chatbox = document.getElementById('chatbox');
+  const toggle = document.getElementById('theme-toggle');
+  const sendBtn = document.querySelector('.send');
+  const imageInput = document.getElementById('image-upload');
+  const pdfInput = document.getElementById('pdf-upload');
+  const modal = document.querySelector('.modal');
+  const modalClose = document.querySelector('.modal-close-button');
+  const extraBtn = document.getElementById('addExtra');
+  const messageInput = document.getElementById('user-input');
 
-function formatTime(date) {
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+  let conversation = [];
 
-function addMessage(role, text, isImage = false) {
-  const bubble = document.createElement('div');
-  bubble.classList.add('bubble', role);
-
-  if (isImage) {
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(text);
-    img.className = 'preview-img';
-    bubble.appendChild(img);
-  } else {
-    bubble.innerHTML = text; // Use innerHTML for MathJax to work
+  function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  const timestamp = document.createElement('span');
-  timestamp.className = 'timestamp';
-  timestamp.innerText = formatTime(new Date());
-  bubble.appendChild(timestamp);
+  function addMessage(role, text, isImage = false) {
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', role);
 
-  chatbox.appendChild(bubble);
-  chatbox.scrollTop = chatbox.scrollHeight;
+    if (isImage) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(text);
+      img.className = 'preview-img';
+      bubble.appendChild(img);
+    } else {
+      bubble.innerText = text;
+    }
 
-  // Re-render MathJax after adding a new GPT message
-  if (window.MathJax) {
-    MathJax.typesetPromise();
-  }
-}
+    const timestamp = document.createElement('span');
+    timestamp.className = 'timestamp';
+    timestamp.innerText = formatTime(new Date());
+    bubble.appendChild(timestamp);
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const message = document.getElementById('user-input').value.trim();
-  const image = document.getElementById('image-upload').files[0];
-  if (!message && !image) return;
-
-  if (message) {
-    addMessage('user', message);
-    conversation.push({ role: 'user', content: message });
-  } else {
-    addMessage('user', image, true);
-    conversation.push({ role: 'user', content: '[Image uploaded]' });
+    chatbox.appendChild(bubble);
+    chatbox.scrollTop = chatbox.scrollHeight;
   }
 
-  const formData = new FormData();
-  formData.append('message', message);
-  if (image) formData.append('image', image);
+  sendBtn.addEventListener('click', async () => {
+    const message = messageInput.value.trim();
+    const image = imageInput.files[0];
+    const pdf = pdfInput.files[0];
 
-  const loading = document.createElement('div');
-  loading.classList.add('bubble', 'gpt', 'loading');
-  loading.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
-  chatbox.appendChild(loading);
-  chatbox.scrollTop = chatbox.scrollHeight;
+    if (!message && !image && !pdf) return;
 
-  try {
-    const res = await fetch('/chat', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    loading.remove();
-    addMessage('gpt', data.reply);
-    conversation.push({ role: 'assistant', content: data.reply });
-  } catch (err) {
-    loading.remove();
-    addMessage('gpt', "Something went wrong.");
-  }
+    if (message) {
+      addMessage('user', message);
+      conversation.push({ role: 'user', content: message });
+    } else if (image) {
+      addMessage('user', image, true);
+      conversation.push({ role: 'user', content: '[Image uploaded]' });
+    } else if (pdf) {
+      addMessage('user', pdf.name);
+      conversation.push({ role: 'user', content: '[PDF uploaded]' });
+    }
 
-  form.reset();
-});
+    const formData = new FormData();
+    formData.append('message', message);
+    if (image) formData.append('image', image);
+    if (pdf) formData.append('pdf', pdf);
 
-saveBtn.addEventListener('click', () => {
-  const filename = `chat_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.json`;
-  const blob = new Blob([JSON.stringify(conversation, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-});
+    const loading = document.createElement('div');
+    loading.classList.add('bubble', 'gpt', 'loading');
+    loading.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+    chatbox.appendChild(loading);
+    chatbox.scrollTop = chatbox.scrollHeight;
 
-toggle.addEventListener('click', () => {
-  document.body.classList.toggle('light-mode');
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      loading.remove();
+      addMessage('gpt', data.reply);
+      conversation.push({ role: 'assistant', content: data.reply });
+    } catch (err) {
+      loading.remove();
+      addMessage('gpt', "Something went wrong.");
+    }
+
+    messageInput.value = "";
+    imageInput.value = "";
+    pdfInput.value = "";
+  });
+
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+  });
+
+  extraBtn.addEventListener('click', () => {
+    modal.classList.toggle('show-modal');
+  });
+
+  modalClose.addEventListener('click', () => {
+    modal.classList.remove('show-modal');
+  });
 });

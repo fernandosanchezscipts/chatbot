@@ -1,99 +1,97 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const chatbox = document.getElementById('chatbox');
-  const toggle = document.getElementById('theme-toggle');
-  const sendBtn = document.querySelector('.send');
-  const imageInput = document.getElementById('image-upload');
-  const pdfInput = document.getElementById('pdf-upload');
-  const modal = document.querySelector('.modal');
-  const modalClose = document.querySelector('.modal-close-button');
-  const extraBtn = document.getElementById('addExtra');
-  const messageInput = document.getElementById('user-input');
+const chatbox = document.getElementById('chatbox');
+const toggle = document.getElementById('theme-toggle');
+const sendBtn = document.getElementById('send-btn');
+const imageInput = document.getElementById('image-upload');
+const pdfInput = document.getElementById('pdf-upload');
+const modal = document.querySelector('.modal');
+const modalClose = document.querySelector('.modal-close-button');
+const extraBtn = document.getElementById('addExtra');
+const userInput = document.getElementById('user-input');
+let conversation = [];
 
-  let conversation = [];
+function formatTime(date) {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
-  function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function addMessage(role, text, isImage = false) {
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble', role);
+
+  if (isImage) {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(text);
+    img.className = 'preview-img';
+    bubble.appendChild(img);
+  } else {
+    bubble.innerText = text;
   }
 
-  function addMessage(role, text, isImage = false) {
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', role);
+  const timestamp = document.createElement('span');
+  timestamp.className = 'timestamp';
+  timestamp.innerText = formatTime(new Date());
+  bubble.appendChild(timestamp);
 
-    if (isImage) {
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(text);
-      img.className = 'preview-img';
-      bubble.appendChild(img);
-    } else {
-      bubble.innerText = text;
-    }
+  chatbox.appendChild(bubble);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
-    const timestamp = document.createElement('span');
-    timestamp.className = 'timestamp';
-    timestamp.innerText = formatTime(new Date());
-    bubble.appendChild(timestamp);
+sendBtn.addEventListener('click', async () => {
+  const message = userInput.value.trim();
+  const image = imageInput.files[0];
+  const pdf = pdfInput.files[0];
 
-    chatbox.appendChild(bubble);
-    chatbox.scrollTop = chatbox.scrollHeight;
+  if (!message && !image && !pdf) return;
+
+  if (message) {
+    addMessage('user', message);
+    conversation.push({ role: 'user', content: message });
+  } else if (image) {
+    addMessage('user', image, true);
+    conversation.push({ role: 'user', content: '[Image uploaded]' });
+  } else if (pdf) {
+    addMessage('user', pdf.name);
+    conversation.push({ role: 'user', content: '[PDF uploaded]' });
   }
 
-  sendBtn.addEventListener('click', async () => {
-    const message = messageInput.value.trim();
-    const image = imageInput.files[0];
-    const pdf = pdfInput.files[0];
+  const formData = new FormData();
+  formData.append('message', message);
+  if (image) formData.append('image', image);
+  if (pdf) formData.append('pdf', pdf);
 
-    if (!message && !image && !pdf) return;
+  const loading = document.createElement('div');
+  loading.classList.add('bubble', 'gpt', 'loading');
+  loading.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+  chatbox.appendChild(loading);
+  chatbox.scrollTop = chatbox.scrollHeight;
 
-    if (message) {
-      addMessage('user', message);
-      conversation.push({ role: 'user', content: message });
-    } else if (image) {
-      addMessage('user', image, true);
-      conversation.push({ role: 'user', content: '[Image uploaded]' });
-    } else if (pdf) {
-      addMessage('user', pdf.name);
-      conversation.push({ role: 'user', content: '[PDF uploaded]' });
-    }
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    loading.remove();
+    addMessage('gpt', data.reply);
+    conversation.push({ role: 'assistant', content: data.reply });
+  } catch (err) {
+    loading.remove();
+    addMessage('gpt', "Something went wrong.");
+  }
 
-    const formData = new FormData();
-    formData.append('message', message);
-    if (image) formData.append('image', image);
-    if (pdf) formData.append('pdf', pdf);
+  userInput.value = "";
+  imageInput.value = "";
+  pdfInput.value = "";
+});
 
-    const loading = document.createElement('div');
-    loading.classList.add('bubble', 'gpt', 'loading');
-    loading.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
-    chatbox.appendChild(loading);
-    chatbox.scrollTop = chatbox.scrollHeight;
+// Theme toggle
+toggle.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+});
 
-    try {
-      const res = await fetch('/chat', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      loading.remove();
-      addMessage('gpt', data.reply);
-      conversation.push({ role: 'assistant', content: data.reply });
-    } catch (err) {
-      loading.remove();
-      addMessage('gpt', "Something went wrong.");
-    }
-
-    messageInput.value = "";
-    imageInput.value = "";
-    pdfInput.value = "";
-  });
-
-  toggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-  });
-
-  extraBtn.addEventListener('click', () => {
-    modal.classList.toggle('show-modal');
-  });
-
-  modalClose.addEventListener('click', () => {
-    modal.classList.remove('show-modal');
-  });
+// Modal handling
+extraBtn.addEventListener('click', () => {
+  modal.classList.toggle('show-modal');
+});
+modalClose.addEventListener('click', () => {
+  modal.classList.remove('show-modal');
 });

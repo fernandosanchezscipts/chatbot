@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import openai
 import os
 import base64
+import re
 
 print("Imports complete")
 
@@ -54,6 +55,13 @@ def chat():
             max_tokens=1000
         )
         reply = response.choices[0].message.content
+
+        # Strip all common Markdown formatting
+        reply = re.sub(r"\*\*(.*?)\*\*", r"\1", reply)  # bold
+        reply = re.sub(r"\*(.*?)\*", r"\1", reply)      # italic
+        reply = re.sub(r"_(.*?)_", r"\1", reply)        # underscore italic
+        reply = re.sub(r"`(.*?)`", r"\1", reply)        # inline code
+
         session["conversation"].append({"role": "assistant", "content": reply})
         return jsonify({"reply": reply})
     except Exception as e:
@@ -63,8 +71,7 @@ def chat():
 if __name__ == "__main__":
     print("Flask running at http://0.0.0.0:10000")
     app.run(host="0.0.0.0", port=10000, debug=True)
-
-
+    
 
 
 
